@@ -1,16 +1,22 @@
-# Chat Example
+# CBChatParticipant
 
-This sample shows
+The current version of the repo is an experimental Copilot Chat Participant plugin. 
 
-- How to contribute a chat participant.
-- How to use the chatRequestAccess API to request access to the chat.
-- How to respond with follow-ups.
+Much of the original code come from https://github.com/microsoft/vscode-extension-samples/tree/main/chat-sample
 
-![demo](./demo.png)
+# PLEASE READ. TO INSTALL AND RUN IN DEV
 
-## Running the Sample
+You MUST be using VS Code Studio - Insiders edition. To install click here: https://code.visualstudio.com/insiders/
 
-- Run `npm install` in terminal to install dependencies
-- Run the `Run Extension` target in the Debug View. This will:
-	- Start a task `npm: watch` to compile the code
-	- Run the extension in a new VS Code window
+After running Insiders, go to extension -> Find GitHub Copilot and switch to the pre-release version.
+
+run `npm install` in terminal
+
+# To run the extension
+
+Anytime you want to test your changes you need to run `npm run compile`
+Then run `npm run watch`
+
+Press F5 on you keyboard. This will open up a new VScode window.
+
+Your extension commands should now be loaded onto this new dev vscode window. You can test your commands here.

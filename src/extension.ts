@@ -5,7 +5,7 @@ import { PlayPrompt } from './play';
 const CAT_NAMES_COMMAND_ID = 'cat.namesInEditor';
 const CHAT_EXAMPLE = 'cb-example.chat';
 
-interface ICatChatResult extends vscode.ChatResult {
+interface ChatResults extends vscode.ChatResult {
     metadata: {
         command: string;
     }
@@ -16,7 +16,7 @@ const MODEL_SELECTOR: vscode.LanguageModelChatSelector = { vendor: 'copilot', fa
 export function activate(context: vscode.ExtensionContext) {
 
     // Define a Cat chat handler. 
-    const handler: vscode.ChatRequestHandler = async (request: vscode.ChatRequest, context: vscode.ChatContext, stream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<ICatChatResult> => {
+    const handler: vscode.ChatRequestHandler = async (request: vscode.ChatRequest, context: vscode.ChatContext, stream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<ChatResults> => {
         // --- Begin of custom CB Commands ---
         if (request.command == 'helloworld') {
             stream.progress('Saying hello to the world')
@@ -109,7 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
     const cat = vscode.chat.createChatParticipant(CHAT_EXAMPLE, handler);
     cat.iconPath = vscode.Uri.joinPath(context.extensionUri, 'cat.jpeg');
     // cat.followupProvider = {
-    //     provideFollowups(result: ICatChatResult, context: vscode.ChatContext, token: vscode.CancellationToken) {
+    //     provideFollowups(result: ChatResults, context: vscode.ChatContext, token: vscode.CancellationToken) {
     //         return [{
     //             prompt: 'let us play',
     //             label: vscode.l10n.t('Play with the cat'),
