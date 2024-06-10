@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { PlayPrompt } from './play';
 
 const CAT_NAMES_COMMAND_ID = 'cat.namesInEditor';
-const CAT_PARTICIPANT_ID = 'chat-sample.cat';
+const CHAT_EXAMPLE = 'cb-example.chat';
 
 interface ICatChatResult extends vscode.ChatResult {
     metadata: {
@@ -17,9 +17,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Define a Cat chat handler. 
     const handler: vscode.ChatRequestHandler = async (request: vscode.ChatRequest, context: vscode.ChatContext, stream: vscode.ChatResponseStream, token: vscode.CancellationToken): Promise<ICatChatResult> => {
+        // --- Begin of custom CB Commands ---
+        if (request.command == 'helloworld') {
+            stream.progress('Saying hello to the world')
+            stream.markdown('Hello, world!');
+            return { metadata: { command: 'helloworld' } };
+        }
+        // --- End of custom CB Commands ---
+
         // To talk to an LLM in your subcommand handler implementation, your
         // extension can use VS Code's `requestChatAccess` API to access the Copilot API.
         // The GitHub Copilot Chat extension implements this provider.
+
         if (request.command == 'teach') {
             stream.progress('Picking the right topic to teach...');
             const topic = getTopic(context.history);
@@ -97,17 +106,17 @@ export function activate(context: vscode.ExtensionContext) {
     // Chat participants appear as top-level options in the chat input
     // when you type `@`, and can contribute sub-commands in the chat input
     // that appear when you type `/`.
-    const cat = vscode.chat.createChatParticipant(CAT_PARTICIPANT_ID, handler);
+    const cat = vscode.chat.createChatParticipant(CHAT_EXAMPLE, handler);
     cat.iconPath = vscode.Uri.joinPath(context.extensionUri, 'cat.jpeg');
-    cat.followupProvider = {
-        provideFollowups(result: ICatChatResult, context: vscode.ChatContext, token: vscode.CancellationToken) {
-            return [{
-                prompt: 'let us play',
-                label: vscode.l10n.t('Play with the cat'),
-                command: 'play'
-            } satisfies vscode.ChatFollowup];
-        }
-    };
+    // cat.followupProvider = {
+    //     provideFollowups(result: ICatChatResult, context: vscode.ChatContext, token: vscode.CancellationToken) {
+    //         return [{
+    //             prompt: 'let us play',
+    //             label: vscode.l10n.t('Play with the cat'),
+    //             command: 'play'
+    //         } satisfies vscode.ChatFollowup];
+    //     }
+    // };
 
     context.subscriptions.push(
         cat,
@@ -189,7 +198,7 @@ function getTopic(history: ReadonlyArray<vscode.ChatRequestTurn | vscode.ChatRes
     const topics = ['linked list', 'recursion', 'stack', 'queue', 'pointers'];
     // Filter the chat history to get only the responses from the cat
     const previousCatResponses = history.filter(h => {
-        return h instanceof vscode.ChatResponseTurn && h.participant == CAT_PARTICIPANT_ID
+        return h instanceof vscode.ChatResponseTurn && h.participant == CHAT_EXAMPLE
     }) as vscode.ChatResponseTurn[];
     // Filter the topics to get only the topics that have not been taught by the cat yet
     const topicsNoRepetition = topics.filter(topic => {
